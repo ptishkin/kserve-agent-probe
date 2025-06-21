@@ -147,7 +147,7 @@ func main() {
 
 	if *enablePuller {
 		logger.Infof("Initializing model agent with config-dir %s, model-dir %s", *configDir, *modelDir)
-		startModelPuller(logger)
+		startModelPuller(logger, probe)
 	}
 
 	var loggerArgs *loggerArgs
@@ -317,16 +317,19 @@ func startLogger(workers int, logger *zap.SugaredLogger) *loggerArgs {
 	}
 }
 
-func startModelPuller(logger *zap.SugaredLogger) {
-	downloader := agent.Downloader{
-		ModelDir:  *modelDir,
-		Providers: map[storage.Protocol]storage.Provider{},
-		Logger:    logger,
+func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
+	
+	if ProbeContainer() {
+		downloader := agent.Downloader{
+			ModelDir:  *modelDir,
+			Providers: map[storage.Protocol]storage.Provider{},
+			Logger:    logger,
+		}
+		watcher := agent.NewWatcher(*configDir, *modelDir, logger)
+		logger.Info("Starting puller")
+		agent.StartPullerAndProcessModels(&downloader, watcher.ModelEvents, logger)
+		go watcher.Start()
 	}
-	watcher := agent.NewWatcher(*configDir, *modelDir, logger)
-	logger.Info("Starting puller")
-	agent.StartPullerAndProcessModels(&downloader, watcher.ModelEvents, logger)
-	go watcher.Start()
 }
 
 func buildProbe(logger *zap.SugaredLogger, probeJSON string, autodetectHTTP2 bool, multiContainerProbes bool) *readiness.Probe {
