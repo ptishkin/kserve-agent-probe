@@ -319,7 +319,7 @@ func startLogger(workers int, logger *zap.SugaredLogger) *loggerArgs {
 
 func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
 	
-	if ProbeContainer() {
+	if probeContainer() {
 		downloader := agent.Downloader{
 			ModelDir:  *modelDir,
 			Providers: map[storage.Protocol]storage.Provider{},
