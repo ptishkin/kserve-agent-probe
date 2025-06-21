@@ -321,7 +321,6 @@ func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
 	logger.Info("check puller service")
 	for range 200 {
 		if !probeContainer() {
-			logger.Info("fail puller service")
 			time.Sleep(1 * time.Second)
 			continue
 		}
@@ -355,6 +354,7 @@ func buildProbe(logger *zap.SugaredLogger, probeJSON string, autodetectHTTP2 boo
 			probe.PeriodSeconds = 1
 		}
 	}
+	
 	if autodetectHTTP2 {
 		return readiness.NewProbeWithHTTP2AutoDetection(coreProbes)
 	}
