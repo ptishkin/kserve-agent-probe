@@ -318,6 +318,7 @@ func startLogger(workers int, logger *zap.SugaredLogger) *loggerArgs {
 }
 
 func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
+	logger.Info("check puller service")
 	
 	if probeContainer() {
 		downloader := agent.Downloader{
