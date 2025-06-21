@@ -69,7 +69,7 @@ jobs:
 
       - name: export version variable
         run: |
-          IMAGE_ID=kserve/$IMAGE_NAME
+          IMAGE_ID=ghcr.io/ptishkin/kserve-agent-probe/$IMAGE_NAME
 
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
