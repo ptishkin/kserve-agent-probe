@@ -319,8 +319,13 @@ func startLogger(workers int, logger *zap.SugaredLogger) *loggerArgs {
 
 func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
 	logger.Info("check puller service")
-	
-	if probeContainer() {
+	for range 200 {
+		if !probeContainer() {
+			logger.Info("fail puller service")
+			time.Sleep(1 * time.Second)
+			continue
+		}
+		
 		downloader := agent.Downloader{
 			ModelDir:  *modelDir,
 			Providers: map[storage.Protocol]storage.Provider{},
@@ -330,7 +335,6 @@ func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
 		logger.Info("Starting puller")
 		agent.StartPullerAndProcessModels(&downloader, watcher.ModelEvents, logger)
 		go watcher.Start()
-	}
 }
 
 func buildProbe(logger *zap.SugaredLogger, probeJSON string, autodetectHTTP2 bool, multiContainerProbes bool) *readiness.Probe {
