@@ -335,6 +335,9 @@ func startModelPuller(logger *zap.SugaredLogger, probeContainer func() bool) {
 		logger.Info("Starting puller")
 		agent.StartPullerAndProcessModels(&downloader, watcher.ModelEvents, logger)
 		go watcher.Start()
+		
+		break
+	}
 }
 
 func buildProbe(logger *zap.SugaredLogger, probeJSON string, autodetectHTTP2 bool, multiContainerProbes bool) *readiness.Probe {
