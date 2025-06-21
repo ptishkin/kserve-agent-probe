@@ -350,6 +350,10 @@ func buildProbe(logger *zap.SugaredLogger, probeJSON string, autodetectHTTP2 boo
 		if probe.InitialDelaySeconds == 0 {
 			probe.InitialDelaySeconds = 10
 		}
+		
+		if probe.PeriodSeconds == 0 {
+			probe.PeriodSeconds = 1
+		}
 	}
 	if autodetectHTTP2 {
 		return readiness.NewProbeWithHTTP2AutoDetection(coreProbes)
